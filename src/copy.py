@@ -93,7 +93,7 @@ def main_print_list():
         print(f"-{len(staged) - index}. {path}")
 
     for index, path in enumerate(unstaged):
-        print(f"index. {path}")
+        print(f"{index}. {path}")
 
 
 def main(parsed_args):
