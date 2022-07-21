@@ -26,7 +26,7 @@ def maybe_replace_arg(arg):
         return [arg]
 
     try:
-        return range_.extract(memoized_get_files_from_git_status())
+        return range_.extract(*memoized_get_files_from_git_status())
     except IndexError:
         sys.exit(f"Range out of bounds: {range_}")
 

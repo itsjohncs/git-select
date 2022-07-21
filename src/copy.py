@@ -15,6 +15,21 @@ def parse_args(args):
     def index_or_range(*args, **kwargs):
         return Range.parse(*args, **kwargs)
 
+    def is_range(arg):
+        try:
+            Range.parse(arg)
+            return True
+        except:
+            return False
+
+    args = args[:]
+
+    # This allows ranges starting with a negative number to be handled
+    # gracefully.
+    taken_ranges = []
+    while args and is_range(args[-1]):
+        taken_ranges.append(Range.parse(args.pop()))
+
     parser = argparse.ArgumentParser(
         description="Looks at the list of files displayed by git-status and, "
         "after skipping staged changes, copies the files at the given "
@@ -31,11 +46,17 @@ def parse_args(args):
         "ranges",
         metavar="INDEX_OR_RANGE",
         type=index_or_range,
-        default=[Range(0, 0)],
         nargs="*",
         help="An index or inclusive range (ex: `1:`, `1:3`).",
     )
-    return parser.parse_args(args)
+    
+    args = parser.parse_args(args)
+    args.ranges.extend(taken_ranges)
+
+    if not args.ranges:
+        args.ranges.append(Range(0, 0))
+
+    return args
 
 
 def put_clipboard(text):
@@ -55,7 +76,7 @@ def main_copy_ranges(ranges):
     selected_files = []
     for range_ in ranges:
         try:
-            selected_files.extend(range_.extract(all_files))
+            selected_files.extend(range_.extract(*all_files))
         except IndexError:
             print(f"Range out of bounds: {range_}")
             sys.exit(1)
@@ -67,9 +88,12 @@ def main_copy_ranges(ranges):
 
 
 def main_print_list():
-    all_files = get_files_from_git_status()
-    for index, path in enumerate(all_files):
-        print(f"{index}. {path}")
+    staged, unstaged = get_files_from_git_status()
+    for index, path in enumerate(staged):
+        print(f"-{len(staged) - index}. {path}")
+
+    for index, path in enumerate(unstaged):
+        print(f"index. {path}")
 
 
 def main(parsed_args):
