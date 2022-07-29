@@ -34,9 +34,10 @@ class Range:
         start = 0 if self.start is None else self.start
         end = len(unstaged) if self.end is None else self.end + 1
 
+        start_is_greater_than_end = start is not None and end is not None and start > end
         if (start >= len(unstaged) or end > len(unstaged) or
                 start < -len(staged) or end < -len(staged) or
-                start > self.end):
+                start_is_greater_than_end):
             raise IndexError()
 
         extracted_staged = []
