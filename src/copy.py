@@ -19,7 +19,7 @@ def parse_args(args):
         try:
             Range.parse(arg)
             return True
-        except:
+        except ValueError:
             return False
 
     args = args[:]
@@ -49,7 +49,7 @@ def parse_args(args):
         nargs="*",
         help="An index or inclusive range (ex: `1:`, `1:3`).",
     )
-    
+
     args = parser.parse_args(args)
     args.ranges.extend(taken_ranges)
 
