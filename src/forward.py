@@ -36,9 +36,13 @@ def main(args):
     for arg in args:
         replaced_args.extend(maybe_replace_arg(arg))
 
-    # pylint: disable=subprocess-run-check
-    process = subprocess.run(["git", *replaced_args])
-    sys.exit(process.returncode)
+    try:
+        # pylint: disable=subprocess-run-check
+        return_code = subprocess.run(["git", *replaced_args]).returncode
+    except KeyboardInterrupt:
+        return_code = 130
+
+    sys.exit(return_code)
 
 
 if __name__ == "__main__":
