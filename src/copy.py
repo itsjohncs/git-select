@@ -62,9 +62,7 @@ def parse_args(args):
 def put_clipboard(text):
     pbcopy = "clip" if os.name == "nt" else "pbcopy"
 
-    with subprocess.Popen(
-        [pbcopy], stdin=subprocess.PIPE, encoding="utf8"
-    ) as process:
+    with subprocess.Popen([pbcopy], stdin=subprocess.PIPE, encoding="utf8") as process:
         process.communicate(text)
         if process.returncode != 0:
             raise RuntimeError(f"{pbcopy} gave non-zero status")

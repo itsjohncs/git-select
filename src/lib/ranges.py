@@ -20,7 +20,7 @@ class Range:
         )
         $
         """,
-        re.VERBOSE
+        re.VERBOSE,
     )
 
     def __init__(self, start, end):
@@ -34,10 +34,16 @@ class Range:
         start = 0 if self.start is None else self.start
         end = len(unstaged) if self.end is None else self.end + 1
 
-        start_is_greater_than_end = start is not None and end is not None and start > end
-        if (start >= len(unstaged) or end > len(unstaged) or
-                start < -len(staged) or end < -len(staged) or
-                start_is_greater_than_end):
+        start_is_greater_than_end = (
+            start is not None and end is not None and start > end
+        )
+        if (
+            start >= len(unstaged)
+            or end > len(unstaged)
+            or start < -len(staged)
+            or end < -len(staged)
+            or start_is_greater_than_end
+        ):
             raise IndexError()
 
         extracted_staged = []
@@ -45,7 +51,7 @@ class Range:
             staged_end = len(staged) if end > -1 else end
             extracted_staged = staged[start:staged_end]
 
-        return extracted_staged + unstaged[max(start, 0):max(end, 0)]
+        return extracted_staged + unstaged[max(start, 0) : max(end, 0)]
 
     @classmethod
     def parse(cls, text):
